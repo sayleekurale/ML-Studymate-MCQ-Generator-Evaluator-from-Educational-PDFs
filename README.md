@@ -190,6 +190,6 @@ This project is licensed under the MIT License. See `LICENSE` for details.
 ## 📬 Contact
 
 Saylee Kurale  
-sayleekurale@example.com  
+kuralesaylee07@gmail.com 
 MIT-WPU, Computer Science  
 ```
