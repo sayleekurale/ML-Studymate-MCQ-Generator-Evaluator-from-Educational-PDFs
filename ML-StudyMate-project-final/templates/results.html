@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Performance Report</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            margin-top: 50px;
+        }
+        h2 {
+            color: #343a40;
+        }
+        table {
+            background-color: #fdfdfd;
+        }
+        .chart-container {
+            margin-top: 40px;
+        }
+        .btn-custom {
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Performance Dashboard</h2>
+        <p class="text-center"><strong>Accuracy:</strong> {{ (accuracy * 100) | round(2) }}%</p>
+
+        <h4 class="mt-4">Classification Report</h4>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Label</th>
+                    <th>Precision (%)</th>
+                    <th>Recall (%)</th>
+                    <th>F1-Score (%)</th>
+                    <th>Support</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for label, metrics in report.items() %}
+                    {% if label not in ['accuracy', 'macro avg', 'weighted avg'] %}
+                        <tr>
+                            <td>{{ label }}</td>
+                            <td>{{ (metrics['precision'] * 100) | round(2) }}</td>
+                            <td>{{ (metrics['recall'] * 100) | round(2) }}</td>
+                            <td>{{ (metrics['f1-score'] * 100) | round(2) }}</td>
+                            <td>{{ metrics['support'] }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="chart-container">
+            <canvas id="metricsChart"></canvas>
+        </div>
+
+        <!-- Go to Dashboard button -->
+        <div class="text-center mt-4">
+            <a href="/dashboard" class="btn btn-success btn-custom">🚀 Go to Dashboard</a>
+        </div>
+
+        <div class="text-center mt-3">
+            <a href="/" class="btn btn-primary">🏠 Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        const labels = {{ report.keys() | list | tojson }};
+        const precisions = [];
+        const recalls = [];
+        const f1scores = [];
+
+        {% for label, metrics in report.items() %}
+            {% if label not in ['accuracy', 'macro avg', 'weighted avg'] %}
+                precisions.push({{ (metrics['precision'] * 100) | round(2) }});
+                recalls.push({{ (metrics['recall'] * 100) | round(2) }});
+                f1scores.push({{ (metrics['f1-score'] * 100) | round(2) }});
+            {% endif %}
+        {% endfor %}
+
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Precision (%)',
+                    data: precisions,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Recall (%)',
+                    data: recalls,
+                    backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'F1-Score (%)',
+                    data: f1scores,
+                    backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }
+            ]
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('metricsChart'), config);
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generated MCQs</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Answer the MCQs</h2>
+        <form method="POST" action="/results">
+            {% for index, mcq in mcqs %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Q{{ index }}: {{ mcq[0] }}?</h5>
+                        {% set options = ['A', 'B', 'C', 'D'] %}
+                        {% for choice_index in range(mcq[1]|length) %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="answer{{ index }}" value="{{ options[choice_index] }}" required>
+                                <label class="form-check-label">
+                                    {{ options[choice_index] }}: {{ mcq[1][choice_index] }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        <input type="hidden" name="correct{{ index }}" value="{{ mcq[2] }}">
+                    </div>
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-success">Submit Answers</button>
+        </form>
+    </div>
+</body>
+</html>

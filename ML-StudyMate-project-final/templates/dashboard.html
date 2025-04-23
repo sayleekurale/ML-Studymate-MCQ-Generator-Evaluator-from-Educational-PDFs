@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ML Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="p-5 bg-light">
+    <div class="container">
+        <h2 class="mb-4">📊 ML-StudyMate Dashboard</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <p>Total Questions Attempted: <strong>{{ total_attempted }}</strong></p>
+                <p>Overall Accuracy: <strong>{{ accuracy|round(2) }}%</strong></p>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <a href="/" class="btn btn-primary mt-4">🏠 Back to Home</a>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Total Attempted', 'Accuracy (%)'],
+                datasets: [{
+                    label: 'Performance Overview',
+                    data: [{{ total_attempted }}, {{ accuracy|round(2) }}],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(75, 192, 192, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
